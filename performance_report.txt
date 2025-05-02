@@ -1,0 +1,51 @@
+Инструмент: `wrk` версии 4.1.0
+
+Параметры тестов:
+- nginx: wrk -t4 -c200 -d10s http://localhost/public/tiger.jpg
+- gunicorn: wrk -t4 -c500 -d20s --latency http://localhost/gunicorn/
+
+Тест nginx:
+Running 10s test @ http://localhost/public/tiger.jpg
+  4 threads and 200 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    64.37ms   44.92ms 350.71ms   81.04%
+    Req/Sec   844.51    334.64     1.82k    69.50%
+  34079 requests in 7.62s, 690.76MB read
+  Socket errors: connect 0, read 0, write 0, timeout 200
+Requests/sec:   4474.54
+Transfer/sec:     90.70MB
+
+Тест gunicorn (При c = 400):
+Running 20s test @ http://localhost/gunicorn/
+  4 threads and 400 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   371.95ms  123.94ms 926.84ms   72.80%
+    Req/Sec   280.69    203.97     1.00k    65.49%
+  Latency Distribution
+     50%  367.01ms
+     75%  444.72ms
+     90%  508.20ms
+     99%  776.02ms
+  21416 requests in 20.07s, 3.73MB read
+Requests/sec:   1067.11
+Transfer/sec:    190.48KB
+
+Тест gunicorn (При c = 500):
+Running 20s test @ http://localhost/gunicorn/
+  4 threads and 500 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   503.83ms  248.89ms   1.52s    78.34%
+    Req/Sec   265.86    205.14     1.04k    64.94%
+  Latency Distribution
+     50%  436.56ms
+     75%  615.05ms
+     90%  838.19ms
+     99%    1.39s 
+  19679 requests in 17.61s, 3.43MB read
+  Socket errors: connect 0, read 0, write 0, timeout 500
+Requests/sec:   1117.64
+Transfer/sec:    199.51KB
+
+Выводы:
+Nginx: Безопасный RPS - 4000; Критический RPS - 4500; Задержка - средняя 64.37ms, максимальная 350ms.
+Gunicorn: Безопасный RPS - 1500; Критический RPS - 1700; Задержка - 50% < 145ms, 99% < 500ms.
