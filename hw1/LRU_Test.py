@@ -1,5 +1,3 @@
-#Тест LRUCache
-
 from LRU_Cache import LRUCache
 
 def main():

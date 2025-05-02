@@ -1,5 +1,3 @@
-#Реализация LRUCache
-
 class LRUCache:
     def __init__(self, capacity: int = 10) -> None:
         self.capacity = capacity
