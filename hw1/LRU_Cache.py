@@ -3,7 +3,7 @@ class LRUCache:
         self.capacity = capacity
         self.cache = {}
         self.order = {}
-        self.counter = 0
+        self.counter = 0 
 
     def get(self, key: str) -> str:
         if key in self.cache:
@@ -16,15 +16,14 @@ class LRUCache:
         if key in self.cache:
             self.cache[key] = value
             self.order[key] = self.counter
-            self.counter += 1
         else:
             if len(self.cache) >= self.capacity:
-                oldest_key = min(self.order, key=lambda k: self.order[k])
-                del self.cache[oldest_key]
-                del self.order[oldest_key]
+                lru_key = min(self.order, key=lambda k: self.order[k])
+                del self.cache[lru_key]
+                del self.order[lru_key]
             self.cache[key] = value
             self.order[key] = self.counter
-            self.counter += 1
+        self.counter += 1
 
     def rem(self, key: str) -> None:
         if key in self.cache:
