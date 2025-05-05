@@ -50,3 +50,41 @@ class Match(models.Model):
         verbose_name = "Матч"
         verbose_name_plural = "Матчи"
         ordering = ['-date']
+
+"""
+from football.models import Team, Player, Match
+from django.utils.timezone import now
+from datetime import timedelta
+
+# Создание команд
+realm = Team.objects.create(name="Реал Мадрид", country="Испания", foundation_date="1902-03-06", stadium="Сантьяго Бернабеу")
+chelsea = Team.objects.create(name="Челси", country="Англия", foundation_date="1905-03-10", stadium="Стэмфорд Бридж")
+realb = Team.objects.create(name="Реал Бетис", country="Испания", foundation_date="1907-09-12", stadium="Бенито Вильямарин")
+reals = Team.objects.create(name="Реал Сосьедад", country="Испания", foundation_date="1909-09-07", stadium="Аноэта")
+vreal = Team.objects.create(name="Вильярреал", country="Испания", foundation_date="1923-03-10", stadium="Эстадио де ла Серамика")
+
+
+# Создание игроков
+Player.objects.create(name="Тибо Куртуа", team=realm, position="GK", number=1, birth_date="1992-05-11")
+Player.objects.create(name="Винисиус Жуниор", team=realm, position="FW", number=7, birth_date="2000-07-12")
+Player.objects.create(name="Коул Палмер", team=chelsea, position="MF", number=20, birth_date="2002-05-06")
+
+# Создание матча
+Match.objects.create(
+    home_team=realm,
+    away_team=chelsea,
+    city="Мадрид",
+    date=now() + timedelta(days=3),
+    home_score=2,
+    away_score=1
+)
+
+
+{
+  "name": "Антони"
+  "position": "FW",
+  "number": 7,
+  "team_id": 3,
+  "birth_date" : "2000-02-24"
+}
+"""

@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./public:/app/public
+    depends_on:
+      - django
+    networks:
+      - app-network
+
+  django:
+    build: .
+    command: python myproject/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=footballdb
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=123
+      - DATABASE_PORT=5432
+    networks:
+      - app-network
+
+  migrate:
+    build: .
+    command: >
+      sh -c "
+      echo '⌛ Ожидание запуска базы данных...';
+      until pg_isready -h db -U user -d footballdb; do sleep 1; done;
+      echo '✅ База данных доступна. Запуск миграций...';
+      python myproject/manage.py migrate"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=footballdb
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=123
+      - DATABASE_PORT=5432
+    networks:
+      - app-network
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=footballdb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./footballdb_dump.sql:/docker-entrypoint-initdb.d/footballdb_dump.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "footballdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
